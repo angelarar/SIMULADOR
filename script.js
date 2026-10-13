@@ -1,12 +1,15 @@
 // CONFIGURACIÓN DE GOOGLE APPS SCRIPT
-// Reemplaza esta variable con la URL de implementación web de tu Apps Script cuando lo tengas listo.
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw6A_9E6yHSmVw7m9pRswPXh5Pv5ofAOa0_zt5nWLnORehp8D_PTpdCXP3dmaAQm-ip/exec";
+
+// Asegúrate de registrar el plugin de etiquetas para la gráfica
+Chart.register(ChartDataLabels);
 
 document.addEventListener("DOMContentLoaded", () => {
     const formInputs = document.querySelectorAll("#cotizadorForm input");
     
-    // Inicializar gráfica de pastel
     const ctx = document.getElementById("graficaComision").getContext("2d");
+    
+    // Configuración de alta resolución para evitar que se vea borroso
     const grafica = new Chart(ctx, {
         type: 'pie',
         data: {
@@ -20,10 +23,22 @@ document.addEventListener("DOMContentLoaded", () => {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            devicePixelRatio: 2, // Duplica la resolución para máxima nitidez
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: { boxWidth: 12, font: { size: 11 } }
+                },
+                datalabels: {
+                    color: '#ffffff',
+                    font: {
+                        weight: 'bold',
+                        size: 13
+                    },
+                    formatter: (value, context) => {
+                        if (value === 0) return '';
+                        return value.toFixed(1) + '%';
+                    }
                 }
             }
         }
@@ -55,7 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("resMontoTotal").innerText = formatCurrency(montoTotalPagar);
 
         // Actualizar gráfica
-        grafica.data.datasets[0].data = [comisionPct, Math.max(0, 100 - comisionPct)];
+        const restoPct = Math.max(0, 100 - comisionPct);
+        grafica.data.datasets[0].data = [comisionPct, restoPct];
         grafica.update();
 
         return {
@@ -68,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         input.addEventListener("input", calcularYActualizar);
     });
 
-    // Botón único para descargar PDF y guardar en base de datos
+    // Botón único para guardar en base de datos y descargar PDF optimizado para móviles y PC
     document.getElementById("btnDescargar").addEventListener("click", async () => {
         const datos = calcularYActualizar();
 
@@ -91,22 +107,41 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // 2. Generar y descargar el PDF
+        // 2. Generar y descargar el PDF adaptado
         const { jsPDF } = window.jspdf;
         const element = document.getElementById("pdfContent");
 
-        html2canvas(element, { scale: 2 }).then(canvas => {
+        const options = {
+            scale: 3, // Mayor resolución para los textos
+            useCORS: true,
+            logging: false,
+            windowWidth: 800 // Ancho virtual de escritorio para que en móviles no se rompa el diseño
+        };
+
+        html2canvas(element, options).then(canvas => {
             const imgData = canvas.toDataURL("image/png");
             const pdf = new jsPDF("p", "mm", "a4");
-            const imgWidth = 190; 
-            const pageHeight = 295;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            let heightLeft = imgHeight;
-            let position = 10;
+            
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            
+            const margin = 15;
+            const usableWidth = pageWidth - (margin * 2);
+            
+            const imgHeight = (canvas.height * usableWidth) / canvas.width;
 
-            pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
+            let finalHeight = imgHeight;
+            let finalWidth = usableWidth;
 
+            if (finalHeight > (pageHeight - (margin * 2))) {
+                finalHeight = pageHeight - (margin * 2);
+                finalWidth = (canvas.width * finalHeight) / canvas.height;
+            }
+
+            const xOffset = margin + (usableWidth - finalWidth) / 2;
+            const yOffset = margin;
+
+            pdf.addImage(imgData, "PNG", xOffset, yOffset, finalWidth, finalHeight);
             pdf.save(`Cotizacion_${datos.nombre.replace(/\s+/g, '_')}.pdf`);
         });
     });
