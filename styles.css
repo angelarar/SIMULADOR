@@ -1,0 +1,131 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f4f6f9;
+    color: #333;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+h2, h3 {
+    color: #1b396b;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #555;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.form-group input:focus {
+    border-color: #1b396b;
+    outline: none;
+}
+
+.preview-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ticket-preview {
+    background: #fafbfc;
+    border: 1px solid #e1e4e8;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.info-row.highlight {
+    font-size: 16px;
+    color: #1b396b;
+    border-top: 1px dashed #ccc;
+    padding-top: 8px;
+    margin-top: 8px;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 10px 0;
+}
+
+.chart-container {
+    width: 200px;
+    height: 200px;
+    margin: 15px auto;
+}
+
+.leyenda-infonavit {
+    font-size: 10px;
+    color: #666;
+    text-align: justify;
+    line-height: 1.2;
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding-top: 8px;
+}
+
+.btn-primary {
+    background-color: #1b396b;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background-color: #142a4e;
+}

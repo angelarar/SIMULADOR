@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizador Rápido - Simulación de Crédito</title>
+    <!-- Estilos CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js para la gráfica -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF y html2canvas para la exportación a PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Panel de Formulario -->
+        <div class="card form-section">
+            <h2>Simulador de Crédito</h2>
+            <form id="cotizadorForm">
+                <div class="form-group">
+                    <label for="nombre">Nombre del Cliente</label>
+                    <input type="text" id="nombre" required placeholder="Ej. Juan Pérez">
+                </div>
+
+                <div class="form-group">
+                    <label for="anos">Monto en Años (Plazo)</label>
+                    <input type="number" id="anos" required placeholder="Ej. 5" min="1" max="10">
+                </div>
+
+                <div class="form-group">
+                    <label for="plazoMeses">Plazo en Meses</label>
+                    <input type="number" id="plazoMeses" required placeholder="Ej. 24" min="1" max="120">
+                </div>
+
+                <div class="form-group">
+                    <label for="montoCredito">Monto de Crédito ($)</label>
+                    <input type="number" id="montoCredito" required placeholder="Ej. $11,000.00" step="1000" min="11,000" max="169,039.02">
+                </div>
+
+                <div class="form-group">
+                    <label for="comisionPct">Comisión en %</label>
+                    <input type="number" id="comisionPct" required placeholder="Ej. 3" step="1" min="15" max="25">
+                </div>
+
+                <div class="form-group">
+                    <label for="descuentoMensual">Descuento Mensual ($)</label>
+                    <input type="number" id="descuentoMensual" required placeholder="Ej. $2,500" step="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label for="asesor">Asesor</label>
+                    <input type="text" id="asesor" required placeholder="Nombre del asesor">
+                </div>
+            </form>
+        </div>
+
+        <!-- Panel de Vista Previa y Resultados -->
+        <div class="card preview-section">
+            <div id="pdfContent" class="ticket-preview">
+                <h3>Simulación de Crédito</h3>
+                <div class="info-row"><span>Cliente:</span> <strong id="resCliente">-</strong></div>
+                <div class="info-row"><span>Asesor:</span> <strong id="resAsesor">-</strong></div>
+                <hr>
+                <div class="info-row"><span>Monto de Crédito:</span> <strong id="resMontoCredito">$0.00</strong></div>
+                <div class="info-row"><span>Comisión Total (<span id="resComisionPctLabel">0</span>%):</span> <strong id="resComisionTotal">$0.00</strong></div>
+                <div class="info-row"><span>Neto en Efectivo:</span> <strong id="resNetoEfectivo">$0.00</strong></div>
+                <div class="info-row"><span>Plazo en Meses:</span> <strong id="resPlazoMeses">0</strong></div>
+                <div class="info-row"><span>Descuento Mensual:</span> <strong id="resDescuentoMensual">$0.00</strong></div>
+                <div class="info-row highlight"><span>Monto Total a Pagar:</span> <strong id="resMontoTotal">$0.00</strong></div>
+
+                <!-- Gráfica -->
+                <div class="chart-container">
+                    <canvas id="graficaComision"></canvas>
+                </div>
+
+                <!-- Leyenda obligatoria -->
+                <p class="leyenda-infonavit">
+                    La información contenida en este simulador es de carácter informativo y refleja condiciones preliminares del crédito, las sumas pueden cambiar de acuerdo al contrato final que se apruebe por el INFONAVIT.
+                </p>
+            </div>
+
+            <!-- Botón único -->
+            <button type="button" id="btnDescargar" class="btn-primary">Descargar Cotización PDF</button>
+        </div>
+    </div>
+
+    <!-- Script principal -->
+    <script src="script.js"></script>
+</body>
+</html>
